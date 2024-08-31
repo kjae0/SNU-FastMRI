@@ -3,5 +3,5 @@
 *.jpg
 *.pyc
 
-*/pycache/
-.DS_Store
+*/__pycache__/
+*/.DS_Store
