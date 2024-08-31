@@ -1,0 +1,52 @@
+python train.py \
+  -b 1 \
+  -e1 15 \
+  -e2 20 \
+  -e3 30 \
+  -l1 5e-4 \
+  -l2 2e-4 \
+  -l3 2e-4 \
+  -r 10 \
+  -n 'promptmr_fd_tc' \
+  -t '/home/Data/train/' \
+  -v '/home/Data/val/' \
+  -m 'promptmr' \
+  -sm 'promptmr' \
+  -s 2 \
+  --full_data \
+  --milestones1 '[6, 9, 12, 14]' \
+  --milestones2 '[10, 12, 14, 16, 18]' \
+  --milestones3 '[10, 14, 18, 22, 26]' \
+  --clip 10 \
+  --gamma 0.4 \
+  --aug_on \
+  --mask_type 'equi' \
+  --output_target_key image \
+  --gpu_id 0 \
+  --aug_delay 3 \
+  --sens_chans 3 \
+  --sens_num_layers 4 \
+  --cascade1 5 \
+  --chans1 1 \
+  --num_layers1 4 \
+  --cascade2 8 \
+  --chans2 4 \
+  --num_layers2 5 \
+  --cascade3 8 \
+  --chans3 4 \
+  --num_layers3 5 \
+  --aug_strength 0.55 \
+  --aug_exp_decay 5.0 \
+  --aug_weight_translation 0.0 \
+  --aug_weight_rotation 0.0 \
+  --aug_weight_scaling 1.0 \
+  --aug_weight_shearing 0.0 \
+  --aug_weight_rot90 0.5 \
+  --aug_weight_fliph 0.5 \
+  --aug_weight_flipv 0.5 \
+  --aug_max_translation_x 0.05 \
+  --aug_max_translation_y 0.75 \
+  --aug_max_rotation 180 \
+  --aug_max_shearing_x 6.25 \
+  --aug_max_shearing_y 6.25 \
+  --aug_max_scaling 0.25

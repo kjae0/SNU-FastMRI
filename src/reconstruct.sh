@@ -1,0 +1,20 @@
+python reconstruct.py \
+  -b 2 \
+  -p '/home/diya/Public/Image2Smiles/jy/fastmri/data/Data/leaderboard' \
+  -g 2 \
+  --wc_stage2_ckpt_dir ../checkpoints/promptmr_wide_fd_wc/best_model_stage2.pt \
+  --wc_stage3_ckpt_dir ../checkpoints/promptmr_wide_fd_wc/best_model_stage3.pt \
+  --tc_stage2_ckpt_dir ../checkpoints/promptmr_fd_tc/best_model_stage2.pt \
+  --tc_stage3_ckpt_dir ../checkpoints/promptmr_fd_tc/best_model_stage3.pt \
+  --output_dir ../reconstructions_tc_wwc \
+  --wc_cascade2 6 \
+  --wc_chans2 6 \
+  --wc_cascade3 6\
+  --wc_chans3 5 \
+  --tc_cascade2 8 \
+  --tc_chans2 4 \
+  --tc_cascade3 8\
+  --tc_chans3 4 \
+  --sens_chans 3 \
+  --tc_stage 3 \
+  --wc_stage 3
