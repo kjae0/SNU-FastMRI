@@ -99,3 +99,15 @@ python leaderboard_eval.py \
   -lp '/home/Data/leaderboard' \
   -yp '/root/reconstructions_tc_wwc'
 ~~~
+
+### Attribution
+Parts of this repository are based on or include code from the following sources:
+
+- [PromptMR](https://github.com/hellopipu/PromptMR)
+  (paper: Fill the K-Space and Refine the Image: Prompting for Dynamic and Multi-Contrast MRI Reconstruction <br>
+  https://arxiv.org/abs/2309.13839)  
+
+- [FastMRI](https://github.com/facebookresearch/fastMRI)  
+
+- [FastMRI SNU](https://github.com/LISTatSNU/FastMRI_challenge)  
+
