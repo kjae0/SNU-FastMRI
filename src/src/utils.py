@@ -19,46 +19,6 @@ def seed_everything(seed):
     torch.manual_seed(seed)
     os.environ['PYTHONHASHSEED'] = str(seed)
 
-def pad_collate(batch):
-    '''
-    collate function for our variavle length data
-    '''
-    max_shape_kspace = [0, 0, 0, 0]
-    max_shape_mask = [0, 0, 0, 0]
-    
-    for mask, kspace, target, maximum, fname, slice in batch:
-        for i in range(4):
-            max_shape_kspace[i] = max(max_shape_kspace[i], kspace.shape[i])
-            max_shape_mask[i] = max(max_shape_mask[i], mask.shape[i])
-    
-    padded_kspaces = []
-    padded_masks = []
-
-    for mask, kspace, target, maximum, fname, slice in batch:
-        
-        padded_kspace = torch.zeros(max_shape_kspace)
-        padded_kspace[:kspace.shape[0], :kspace.shape[1], :kspace.shape[2], :kspace.shape[3]] = kspace
-        padded_kspaces.append(padded_kspace)
-        
-        
-        padded_mask = torch.zeros(max_shape_mask)
-        padded_mask[:mask.shape[0], :mask.shape[1], :mask.shape[2], :mask.shape[3]] = mask
-        padded_masks.append(padded_mask)
-        
-    
-    targets = [item[2] for item in batch]
-    maximums = [item[3] for item in batch]
-    fnames = [item[4] for item in batch]
-    slices = [item[5] for item in batch]
-
-    
-    padded_kspaces = torch.stack(padded_kspaces)
-    padded_masks = torch.stack(padded_masks)
-    targets = torch.stack(targets)
-    maximums = torch.tensor(maximums)
-    
-    return padded_masks, padded_kspaces, targets, maximums, fnames, slices
-
 def save_reconstructions(reconstructions, out_dir, targets=None, inputs=None, kspace=None):
     """
     Saves the reconstructions from a model into h5 files that is appropriate for submission
@@ -82,9 +42,8 @@ def save_reconstructions(reconstructions, out_dir, targets=None, inputs=None, ks
             if inputs is not None:
                 f.create_dataset('input', data=inputs[fname])
 
-"""
-Utility and helper functions for MRAugment.
-"""
+
+# Utility and helper functions for MRAugment.
 
 def _to_repeated_list(a, length):
     if isinstance(a, list):

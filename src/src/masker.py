@@ -4,6 +4,33 @@ from typing import Optional, Sequence, Tuple, Union
 import numpy as np
 import torch
 
+def build_masker(args, num_epochs):
+    masker = None
+    val_maskers = {}
+
+    if not args.mask_off:
+        print(f"Masking with {args.mask_type} mask")
+        print(f"Center fraction: {args.center_fraction}, Acceleration: {args.acceleration}")
+        
+        if args.mask_type.lower() == 'random':
+            masker = RandomMaskFunc(args.center_fraction, args.acceleration)
+        elif args.mask_type.lower() == 'equi':
+            if args.acc_scheduler:
+                masker = EquiSpacedMaskFunc(args.center_fraction, args.acceleration, start_ratio=args.acc_scheduler_t0, n_steps=int(num_epochs * args.acc_scheduler_tmax))
+            else:
+                masker = EquiSpacedMaskFunc(args.center_fraction, args.acceleration)
+        else:
+            raise NotImplementedError("Other mask is not implemented yet.")
+        
+    print("Validation Mask Setting")
+    print(f"Center fraction: {args.val_center_fraction}, Acceleration: {args.val_acceleration}")
+    
+    for i in range(len(args.val_center_fraction)):
+        val_maskers[args.val_acceleration[i]] = EquiSpacedMaskFunc([args.val_center_fraction[i]], [args.val_acceleration[i]])
+        
+    return {'train_masker': masker, 
+            'val_masker': val_maskers}
+
 @contextlib.contextmanager
 def temp_seed(rng: np.random.RandomState, seed: Optional[Union[int, Tuple[int, ...]]]):
     """A context manager for temporarily adjusting the random seed."""

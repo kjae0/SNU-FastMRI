@@ -1,9 +1,29 @@
 import h5py
-from pathlib import Path
-
 import numpy as np
-from torch.utils.data import Dataset
 
+from pathlib import Path
+from torch.utils.data import Dataset, DataLoader
+
+from src.transforms import DataTransform
+from src.augmentor import DataAugmentor
+
+def build_dataset(args, num_epochs):
+    augmentor = DataAugmentor(args, num_epochs)
+    train_transform = DataTransform(False, args.max_key, augmentor, crop_by_width=args.crop_by_width)
+
+    train_dataset = SliceData(root=[args.data_path_train, args.data_path_val], 
+                                    transform=train_transform,
+                                    input_key=args.input_key, 
+                                    target_key=args.target_key)
+
+    train_dl = DataLoader(dataset=train_dataset,
+                            batch_size=args.batch_size,
+                            shuffle=True,
+                            num_workers=args.num_workers)
+    
+    return {'augmentor': augmentor, 
+            'train_dl': train_dl, 
+            'val_dl': None}
 
 class SliceData(Dataset):
     def __init__(self, root, transform, input_key, target_key, forward=False):

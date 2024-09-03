@@ -1,3 +1,6 @@
+# Evaluation code for FastMRI challenge
+# Code Source: https://github.com/LISTatSNU/FastMRI_challenge
+
 import argparse
 import numpy as np
 import h5py

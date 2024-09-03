@@ -13,7 +13,6 @@ class Stage1Engine(nn.Module):
         model
     ):
         super().__init__()
-
         self.sens_net = sens_net
         self.model = model
         
@@ -44,12 +43,6 @@ class Stage2Engine(nn.Module):
         self.model = model
         self.current_epoch = 0
 
-    def get_current_epoch(self):
-        return self.current_epoch
-    
-    def caching(self, cache):
-        self.sens_net.caching(cache)
-        
     def train(self):
         self.sens_net.eval()
         self.model.train()
@@ -69,7 +62,6 @@ class Stage2Engine(nn.Module):
         
         return output
     
-    
 class Stage3Engine(nn.Module):
     def __init__(
         self,
@@ -87,9 +79,6 @@ class Stage3Engine(nn.Module):
         self.prev_models = prev_models
         self.model = model
         self.current_epoch = 0
-
-    def get_current_epoch(self):
-        return self.current_epoch
     
     def train(self):
         self.sens_net.eval()

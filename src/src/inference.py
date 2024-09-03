@@ -3,7 +3,7 @@ from pathlib import Path
 from collections import defaultdict
 
 from src.utils import save_reconstructions
-from src.load_data import create_data_loaders
+from src.dataset_leaderboard import create_data_loaders
 from src.models import engine, promptmr
 
 import os
