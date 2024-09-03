@@ -4,6 +4,16 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+def build_loss_fn(cfg, device):
+    loss_fns = []
+    for lf in cfg['losses']:
+        if lf == "s":
+            loss_fn = SSIMLoss().to(device)
+        elif lf == 'l':
+            loss_fn = nn.L1Loss().to(device)
+        loss_fns.append(loss_fn)
+        
+    return loss_fns
 
 class SSIMLoss(nn.Module):
     """

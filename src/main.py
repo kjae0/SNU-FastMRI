@@ -56,6 +56,7 @@ if __name__ == '__main__':
     if args.contd_stage == 2:
         print("Starting stage 2")
         print("=" * 100)
+        cfg['stage1_exp_dir'] = os.path.join('../result', str(cfg['net_name'])+"_stage1", 'checkpoints')
         cfg['exp_dir'] = os.path.join('../result', str(cfg['net_name'])+"_stage2", 'checkpoints')
         cfg['val_dir'] = os.path.join('../result', str(cfg['net_name'])+"_stage2", 'reconstructions_val')
         cfg['main_dir'] = os.path.join('../result', cfg['net_name'], __file__)
@@ -73,6 +74,7 @@ if __name__ == '__main__':
     if args.contd_stage == 3:
         print("Starting stage 3")
         print("=" * 100)
+        cfg['stage2_exp_dir'] = os.path.join('../result', str(cfg['net_name'])+"_stage2", 'checkpoints')
         cfg['exp_dir'] = os.path.join('../result', str(cfg['net_name'])+"_stage3", 'checkpoints')
         cfg['val_dir'] = os.path.join('../result', str(cfg['net_name'])+"_stage3", 'reconstructions_val')
         cfg['main_dir'] = os.path.join('../result', cfg['net_name'], __file__)
