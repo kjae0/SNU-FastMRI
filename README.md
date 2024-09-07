@@ -100,7 +100,7 @@ python leaderboard_eval.py \
   -yp '/root/reconstructions_tc_wwc'
 ~~~
 
-### Attribution
+### Sources
 Parts of this repository are based on or include code from the following sources:
 
 - [PromptMR](https://github.com/hellopipu/PromptMR)
