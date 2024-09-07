@@ -1,7 +1,7 @@
 
 # 2024 SNU FastMRI Challenge
 Submission Code for Team '재애애영' <br>Members: 김재영, 구자혁 <br>
-Final SSIM (leaderboard) - 0.9824 <br>
+Final SSIM (leaderboard) - 0.9824 <br> 
 
 ## Environments
 ~~~
