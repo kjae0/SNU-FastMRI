@@ -44,9 +44,9 @@ def train_loop(cfg,
             augmentor.set_epoch(epoch)
             print(f'Epoch #{epoch+1:2d} ............... {cfg['net_name']} ...............')
             if augmentor.aug_on:
-                print("Augmentation probability: ", augmentor.schedule_p(), augmentor.current_epoch)
+                print("[INFO] Augmentation probability: ", augmentor.schedule_p(), augmentor.current_epoch)
             else:
-                print("Augmentation off")
+                print("[INFO] Augmentation off")
 
             train_loss, train_time = train_one_epoch(cfg, epoch, engine, train_dl, optimizer, scheduler, loss_fns, device, masker, num_epochs)
             print(f"{epoch+1} / {num_epochs} - Train loss: {train_loss:.4g}, TrainTime = {train_time:.4f}s")
@@ -81,6 +81,15 @@ def train_one_epoch(cfg, epoch, model, dl, optimizer, scheduler, loss_fns, devic
     for iter, data in enumerate(dl):
         mask, kspace, target, maximum, _, _ = data
         
+        # mask -> (B, 1, H, W)
+        # kspace -> (B, 1, H, W, 2)
+        # target -> (B, 1, H, W)
+        # maximum -> (B, 1)
+        assert mask.dim() == 4
+        assert kspace.dim() == 5
+        assert target.dim() == 4
+        assert maximum.dim() == 2
+        
         if masker is not None:
             mask, _, acceleration = masker(kspace.shape)
             mask = mask.bool()
@@ -104,6 +113,10 @@ def train_one_epoch(cfg, epoch, model, dl, optimizer, scheduler, loss_fns, devic
                 
         if acceleration and cfg['acceleration_scaler']:
             loss *= (((16 / acceleration) ** 2) / 4)
+            
+        # if loss became Nan, stop training
+        if torch.isnan(loss):
+            raise ValueError(f"Loss became Nan at epoch {epoch} iteration {iter}. Stopping execution.")
         
         optimizer.zero_grad()
         loss.backward()
@@ -144,7 +157,6 @@ def validate(args, model, dl, device, val_maskers):
                     mask, _ = masker(kspace.shape)
                     mask = mask.bool()
 
-                # + 0.0 지우지 마쇼
                 kspace = kspace * mask + 0.0
                 
                 kspace = kspace.to(device)
@@ -211,7 +223,7 @@ def train_1stage(cfg, device, ckpt=None):
     val_maskers = masker_dict['val_masker']
 
     loss_fns = losses.build_loss_fn(cfg, device)
-    print(f"Loss functions: {loss_fns}")
+    print(f"[INFO] Loss functions: {loss_fns}")
     
     if cfg['milestones1']:
         milestones = cfg['milestones1']
@@ -221,7 +233,7 @@ def train_1stage(cfg, device, ckpt=None):
     optimizer = optim.Adam(engine.parameters(), cfg['lr1'])
     
     if ckpt:
-        print(f"Loading checkpoint!")
+        print(f"[INFO] Loading checkpoint!")
         engine.load_state_dict(ckpt['engine'])
         optimizer.load_state_dict(ckpt['optimizer'])
     
@@ -229,10 +241,10 @@ def train_1stage(cfg, device, ckpt=None):
                                                milestones, 
                                                gamma=cfg['gamma'])
     
-    print("Training Stage 1")
-    print(f"Training {cfg['model']} with {cfg['sens_model']} sensitivity model")
-    print(f"Scheduler milestones: {milestones}")
-    print(f"Expected last learning rate: {cfg['lr1'] * cfg['gamma'] ** len(milestones)}")
+    print("[INFO] Training Stage 1")
+    print(f"[INFO] Training {cfg['model']} with {cfg['sens_model']} sensitivity model")
+    print(f"[INFO] Scheduler milestones: {milestones}")
+    print(f"[INFO] Expected last learning rate: {cfg['lr1'] * cfg['gamma'] ** len(milestones)}")
 
     train_loop(cfg=cfg,
                augmentor=augmentor,
@@ -256,7 +268,7 @@ def train_2stage(cfg, device, ckpt=None):
         state_dict = torch.load(os.path.join(cfg['stage1_exp_dir'], 'best_model.pt'), map_location=device)['sens_net']
         sens_net.load_state_dict(state_dict)
     else:
-        print(f"Loading checkpoint!")
+        print(f"[INFO] Loading checkpoint!")
         sens_net.load_state_dict(ckpt['sens_net'])
         
     engine = Stage2Engine(sens_net=sens_net, model=model)
@@ -271,7 +283,7 @@ def train_2stage(cfg, device, ckpt=None):
     val_maskers = masker_dict['val_masker']
 
     loss_fns = losses.build_loss_fn(cfg, device)
-    print(f"Loss functions: {loss_fns}")
+    print(f"[INFO] Loss functions: {loss_fns}")
     
     if cfg['milestones2']:
         milestones = cfg['milestones2']
@@ -282,10 +294,10 @@ def train_2stage(cfg, device, ckpt=None):
                                                milestones, 
                                                gamma=cfg['gamma'])
     
-    print("Training Stage 2")
-    print(f"Training {cfg['model']} with {cfg['sens_model']} sensitivity model")
-    print(f"Scheduler milestones: {milestones}")
-    print(f"Expected last learning rate: {cfg['lr2'] * cfg['gamma'] ** len(milestones)}")
+    print("[INFO] Training Stage 2")
+    print(f"[INFO] Training {cfg['model']} with {cfg['sens_model']} sensitivity model")
+    print(f"[INFO] Scheduler milestones: {milestones}")
+    print(f"[INFO] Expected last learning rate: {cfg['lr2'] * cfg['gamma'] ** len(milestones)}")
     
     train_loop(cfg=cfg,
                augmentor=augmentor,
@@ -321,7 +333,7 @@ def train_3stage(cfg, device, ckpt=None):
     val_maskers = masker_dict['val_masker']
 
     loss_fns = losses.build_loss_fn(cfg, device)
-    print(f"Loss functions: {loss_fns}")
+    print(f"[INFO] Loss functions: {loss_fns}")
     
     if cfg['milestones3']:
         milestones = cfg['milestones3']
@@ -330,7 +342,7 @@ def train_3stage(cfg, device, ckpt=None):
     optimizer = optim.Adam(engine.parameters(), cfg['lr3'])
     
     if ckpt:
-        print(f"Loading checkpoint!")
+        print(f"[INFO] Loading checkpoint!")
         engine.load_state_dict(ckpt['engine'])
         optimizer.load_state_dict(ckpt['optimizer'])
     
@@ -338,10 +350,10 @@ def train_3stage(cfg, device, ckpt=None):
                                                milestones, 
                                                gamma=cfg['gamma'])
     
-    print("Training Stage 3")
-    print(f"Training {cfg['model']} with {cfg['sens_model']} sensitivity model")
-    print(f"Scheduler milestones: {milestones}")
-    print(f"Expected last learning rate: {cfg['lr3'] * cfg['gamma'] ** len(milestones)}")
+    print("[INFO] Training Stage 3")
+    print(f"[INFO] Training {cfg['model']} with {cfg['sens_model']} sensitivity model")
+    print(f"[INFO] Scheduler milestones: {milestones}")
+    print(f"[INFO] Expected last learning rate: {cfg['lr3'] * cfg['gamma'] ** len(milestones)}")
     
     train_loop(cfg=cfg,
                augmentor=augmentor,
