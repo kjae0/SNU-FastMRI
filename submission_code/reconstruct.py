@@ -36,9 +36,9 @@ def parse():
     parser.add_argument('--tc_cascade3', type=int, required=True)
     parser.add_argument('--tc_chans3', type=int, required=True)
     
-    parser.add_argument('--sens_chans', type=int, default=3, help='Number of channels for sensitivity map U-Net | 8 in original varnet') ## important hyperparameter 
-    parser.add_argument('--tc_stage', type=int, default=3, help='Number of cascades | Should be less than 12')
-    parser.add_argument('--wc_stage', type=int, default=3, help='Number of cascades | Should be less than 12')
+    parser.add_argument('--sens_chans', type=int, default=3)
+    parser.add_argument('--tc_stage', type=int, default=3)
+    parser.add_argument('--wc_stage', type=int, default=3)
 
     args = parser.parse_args()
     

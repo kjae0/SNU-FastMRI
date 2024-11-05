@@ -25,64 +25,38 @@ if __name__ == '__main__':
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     
     if device == 'cpu':
-        print("WARNING!\nYou are using CPU for training. This is not recommended.")
+        print("[INFO] WARNING!\nYou are using CPU for training. This is not recommended.")
 
     ckpt = None
     if args.ckpt_dir and args.contd_stage != 1:
-        print(f"Continuing from {args.ckpt_dir} in stage {args.contd_stage}")
+        print(f"[INFO] Continuing from {args.ckpt_dir} in stage {args.contd_stage}")
         ckpt = torch.load(os.path.join(args.ckpt_dir, 'checkpoints', 'best_model.pt'))
     elif not args.ckpt_dir and args.contd_stage != 1:
-        print(f"Starting from scratch in stage {args.contd_stage}")
+        print(f"[INFO] Starting from scratch in stage {args.contd_stage}")
     elif args.ckpt_dir and args.contd_stage == 1:
         raise ValueError("ckpt_dir should be given with contd_stage")
     
-    if args.contd_stage == 1:
-        print("Starting stage 1")
+    train_func_dict = {
+        1: train.train_1stage,
+        2: train.train_2stage,
+        3: train.train_3stage
+    }
+    
+    for i in range(args.contd_stage, 4):
+        print(f"[INFO] Starting stage {args.contd_stage}")
         print("=" * 100)
-        cfg['exp_dir'] = os.path.join('../result', str(cfg['net_name'])+"_stage1", 'checkpoints')
-        cfg['val_dir'] = os.path.join('../result', str(cfg['net_name'])+"_stage1", 'reconstructions_val')
+        cfg[f'stage{args.contd_stage-1}_exp_dir'] = os.path.join('../result', str(cfg['net_name'])+f"_stage{args.contd_stage-1}", 'checkpoints')
+        cfg['exp_dir'] = os.path.join('../result', str(cfg['net_name'])+f"_stage{args.contd_stage}", 'checkpoints')
+        cfg['val_dir'] = os.path.join('../result', str(cfg['net_name'])+f"_stage{args.contd_stage}", 'reconstructions_val')
         cfg['main_dir'] = os.path.join('../result', cfg['net_name'], __file__)
-        cfg['val_loss_dir'] = os.path.join('../result', str(cfg['net_name'])+"_stage1")
+        cfg['val_loss_dir'] = os.path.join('../result', str(cfg['net_name'])+f"_stage{args.contd_stage}")
         
         if os.path.exists(cfg['exp_dir']):
-            print(f"WARNING!\nDirectory {cfg['exp_dir']} already exists. I would be OVERWRITING the contents.")
-            os.makedirs(cfg['exp_dir'], exist_ok=True)
-        
-        train.train_1stage(cfg, device, ckpt=ckpt)
+                print(f"WARNING!\nDirectory {cfg['exp_dir']} already exists. I would be OVERWRITING the contents.")
+                os.makedirs(cfg['exp_dir'], exist_ok=True)
+                
+        train_func_dict[i](cfg, device, ckpt=ckpt)
         gc.collect()
         torch.cuda.empty_cache()
         args.contd_stage += 1
-        
-    if args.contd_stage == 2:
-        print("Starting stage 2")
-        print("=" * 100)
-        cfg['stage1_exp_dir'] = os.path.join('../result', str(cfg['net_name'])+"_stage1", 'checkpoints')
-        cfg['exp_dir'] = os.path.join('../result', str(cfg['net_name'])+"_stage2", 'checkpoints')
-        cfg['val_dir'] = os.path.join('../result', str(cfg['net_name'])+"_stage2", 'reconstructions_val')
-        cfg['main_dir'] = os.path.join('../result', cfg['net_name'], __file__)
-        cfg['val_loss_dir'] = os.path.join('../result', str(cfg['net_name'])+"_stage2")
-        
-        if os.path.exists(cfg['exp_dir']):
-            print(f"WARNING!\nDirectory {cfg['exp_dir']} already exists. I would be OVERWRITING the contents.")
-            os.makedirs(cfg['exp_dir'], exist_ok=True)
-        
-        train.train_2stage(cfg, device, ckpt=ckpt)
-        gc.collect()
-        torch.cuda.empty_cache()
-        args.contd_stage += 1
-        
-    if args.contd_stage == 3:
-        print("Starting stage 3")
-        print("=" * 100)
-        cfg['stage2_exp_dir'] = os.path.join('../result', str(cfg['net_name'])+"_stage2", 'checkpoints')
-        cfg['exp_dir'] = os.path.join('../result', str(cfg['net_name'])+"_stage3", 'checkpoints')
-        cfg['val_dir'] = os.path.join('../result', str(cfg['net_name'])+"_stage3", 'reconstructions_val')
-        cfg['main_dir'] = os.path.join('../result', cfg['net_name'], __file__)
-        cfg['val_loss_dir'] = os.path.join('../result', str(cfg['net_name'])+"_stage3")
-        
-        if os.path.exists(cfg['exp_dir']):
-            print(f"WARNING!\nDirectory {cfg['exp_dir']} already exists. I would be OVERWRITING the contents.")
-            os.makedirs(cfg['exp_dir'], exist_ok=True)
-        
-        train.train_3stage(cfg, device, ckpt=ckpt)
         
