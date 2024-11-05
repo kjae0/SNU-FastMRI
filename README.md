@@ -1,7 +1,7 @@
 
 # 2024 SNU FastMRI Challenge
 Submission Code for Team '재애애영' <br>Members: 김재영, 구자혁 <br>
-Final SSIM (leaderboard) - 0.9824 <br>
+Final SSIM (leaderboard) - 0.9824 <br> 
 
 ## Environments
 ~~~
@@ -100,7 +100,7 @@ python leaderboard_eval.py \
   -yp '/root/reconstructions_tc_wwc'
 ~~~
 
-### Attribution
+### Sources
 Parts of this repository are based on or include code from the following sources:
 
 - [PromptMR](https://github.com/hellopipu/PromptMR)
