@@ -41,8 +41,7 @@ def save_reconstructions(reconstructions, out_dir, targets=None, inputs=None, ks
                 f.create_dataset('target', data=targets[fname])
             if inputs is not None:
                 f.create_dataset('input', data=inputs[fname])
-
-
+                
 # Utility and helper functions for MRAugment.
 
 def _to_repeated_list(a, length):
@@ -113,8 +112,7 @@ def complex_crop_if_needed(im, max_shape):
         w_crop_before = 0
         w_interval = im.shape[-2]
 
-    return im[...,h_crop_before:h_crop_before+h_interval, w_crop_before:w_crop_before+w_interval, :]
-    
+    return im[...,h_crop_before:h_crop_before+h_interval, w_crop_before:w_crop_before+w_interval, :] 
     
 def ifft2_np(x):
     return np.fft.ifftshift(np.fft.ifft2(np.fft.fftshift(x.astype(np.complex64), axes=[-2, -1]), norm='ortho'), axes=[-2, -1]).astype(np.complex64)
@@ -122,7 +120,6 @@ def ifft2_np(x):
 
 def fft2_np(x):
     return np.fft.ifftshift(np.fft.fft2(np.fft.fftshift(x.astype(np.complex64), axes=[-2, -1]), norm='ortho'), axes=[-2, -1]).astype(np.complex64)
-
 
 def complex_channel_first(x):
     assert x.shape[-1] == 2

@@ -5,6 +5,15 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+def get_engine_cls(stage):
+    if stage == 1:
+        return Stage1Engine
+    elif stage == 2:
+        return Stage2Engine
+    elif stage == 3:
+        return Stage3Engine
+    else:
+        raise ValueError("Invalid stage number")
 
 class Stage1Engine(nn.Module):
     def __init__(

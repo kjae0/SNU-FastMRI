@@ -413,9 +413,6 @@ class PromptMR(nn.Module):
         n_feat0: int = 48,
         feature_dim: List[int] = [72, 96, 120],
         prompt_dim: List[int] = [24, 48, 72],
-        sens_n_feat0: int =24,
-        sens_feature_dim: List[int] = [36, 48, 60],
-        sens_prompt_dim: List[int] = [12, 24, 36],
         len_prompt: List[int] = [5, 5, 5],
         prompt_size: List[int] = [64, 32, 16],
         n_enc_cab: List[int] = [2, 3, 3],
@@ -423,16 +420,7 @@ class PromptMR(nn.Module):
         n_skip_cab: List[int] = [1, 1, 1],
         n_bottleneck_cab: int = 3,
         no_use_ca: bool = False,
-        sens_len_prompt: Optional[List[int]] = None,
-        sens_prompt_size: Optional[List[int]] = None,
-        sens_n_enc_cab: Optional[List[int]] = None,
-        sens_n_dec_cab: Optional[List[int]] = None,
-        sens_n_skip_cab: Optional[List[int]] = None,
-        sens_n_bottleneck_cab: Optional[List[int]] = None,
-        sens_no_use_ca: Optional[bool] = None,
-        mask_center: bool = True,
         use_checkpoint: bool = False,
-        low_mem: bool = False,
         train_sens_net = True
     ):
         """

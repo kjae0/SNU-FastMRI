@@ -3,13 +3,10 @@ from src.models import promptmr, prompt_sme
 def build_sensitivity_model(args):
     # to maximize channel within 8GB VRAM limitation
     if not args.crop_by_width:
-        opt1 = 1
-        opt2 = 2
-        opt3 = 1
+        opt1, opt2, opt3 = 1, 2, 1
     else:
-        opt1 = 1
-        opt2 = 0
-        opt3 = 0
+        opt1, opt2, opt3 = 1, 0, 0
+
     sens_model = prompt_sme.SensitivityModel(num_adj_slices=1,
                                             n_feat0 =int(4*args.sens_chans),
                                             feature_dim = [int(6*args.sens_chans)+opt1, int(7*args.sens_chans)+opt2, int(9*args.sens_chans)+opt3],

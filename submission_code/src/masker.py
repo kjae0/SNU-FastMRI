@@ -9,8 +9,8 @@ def build_masker(args, num_epochs):
     val_maskers = {}
 
     if not args.mask_off:
-        print(f"Masking with {args.mask_type} mask")
-        print(f"Center fraction: {args.center_fraction}, Acceleration: {args.acceleration}")
+        print(f"[INFO] Masking with {args.mask_type} mask")
+        print(f"[INFO] Center fraction: {args.center_fraction}, Acceleration: {args.acceleration}")
         
         if args.mask_type.lower() == 'random':
             masker = RandomMaskFunc(args.center_fraction, args.acceleration)
@@ -22,14 +22,17 @@ def build_masker(args, num_epochs):
         else:
             raise NotImplementedError("Other mask is not implemented yet.")
         
-    print("Validation Mask Setting")
-    print(f"Center fraction: {args.val_center_fraction}, Acceleration: {args.val_acceleration}")
+    print("[INFO] Validation Mask Setting")
+    print(f"[INFO] Center fraction: {args.val_center_fraction}, Acceleration: {args.val_acceleration}")
     
     for i in range(len(args.val_center_fraction)):
         val_maskers[args.val_acceleration[i]] = EquiSpacedMaskFunc([args.val_center_fraction[i]], [args.val_acceleration[i]])
         
     return {'train_masker': masker, 
             'val_masker': val_maskers}
+    
+# Code below is from facebookresearch/fastMRI.
+# https://github.com/facebookresearch/fastMRI/blob/main/fastmri/data/subsample.py
 
 @contextlib.contextmanager
 def temp_seed(rng: np.random.RandomState, seed: Optional[Union[int, Tuple[int, ...]]]):

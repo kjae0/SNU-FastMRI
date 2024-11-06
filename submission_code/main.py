@@ -5,6 +5,7 @@ import gc
 import torch
 
 from src import train
+from src import trainer
 from src import utils
 
 def parse_arguments():
@@ -43,6 +44,8 @@ if __name__ == '__main__':
     }
     
     for i in range(args.contd_stage, 4):
+        runner = trainer.Trainer(cfg, device)
+        
         print(f"[INFO] Starting stage {args.contd_stage}")
         print("=" * 100)
         cfg[f'stage{args.contd_stage-1}_exp_dir'] = os.path.join('../result', str(cfg['net_name'])+f"_stage{args.contd_stage-1}", 'checkpoints')
@@ -55,7 +58,8 @@ if __name__ == '__main__':
                 print(f"WARNING!\nDirectory {cfg['exp_dir']} already exists. I would be OVERWRITING the contents.")
                 os.makedirs(cfg['exp_dir'], exist_ok=True)
                 
-        train_func_dict[i](cfg, device, ckpt=ckpt)
+        # train_func_dict[i](cfg, device, ckpt=ckpt)
+        runner.run_training(i, ckpt=ckpt)
         gc.collect()
         torch.cuda.empty_cache()
         args.contd_stage += 1

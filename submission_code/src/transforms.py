@@ -46,8 +46,6 @@ class DataTransform:
             aug_kspace, aug_target = self.augmentor(kspace_complex, target_size=(target.shape[-2], target.shape[-1]))
 
             if aug_target is not None:
-
-
                 kspace_real = aug_kspace[..., 0]
                 kspace_imag = aug_kspace[..., 1]
                 kspace = torch.complex(kspace_real, kspace_imag)
